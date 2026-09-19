@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: #F3EEE2;
+  color: #241F17;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+.btn {
+  @apply inline-flex items-center gap-2 px-6 py-3 font-semibold text-sm transition-colors border;
+}
+.btn-primary {
+  @apply btn bg-verified border-verified text-white hover:bg-verifieddeep hover:border-verifieddeep;
+}
+.btn-brand {
+  @apply btn bg-brand border-brand text-white hover:bg-branddeep hover:border-branddeep;
+}
+.btn-outline {
+  @apply btn bg-transparent border-current text-inherit hover:bg-inktext hover:text-paper;
+}
+.btn-outline-ink {
+  @apply btn bg-transparent border-ink text-ink hover:bg-ink hover:text-paper;
+}
+.field label {
+  @apply block text-sm font-semibold mb-1;
+}
+.field input, .field select, .field textarea {
+  @apply w-full px-3 py-2 border border-line bg-white text-inktext focus:outline-none focus:ring-2 focus:ring-verified;
+}
+.chip {
+  @apply inline-flex items-center gap-2 px-3 py-1.5 border border-line text-xs font-mono;
+}
+.panel {
+  @apply border border-line p-6;
+}
