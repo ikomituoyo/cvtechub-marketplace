@@ -17,6 +17,8 @@ export default function Footer() {
           <h5 className="text-paper font-semibold mb-3">Ecosystem</h5>
           <ul className="space-y-2">
             <li><Link href="/services" className="hover:text-paper">Services</Link></li>
+            <li><Link href="/sell#cvda" className="hover:text-paper">CVDA / community</Link></li>
+            <li><Link href="/about#wallet" className="hover:text-paper">CVT Wallet</Link></li>
             <li><Link href="/sell" className="hover:text-paper">Become a vendor</Link></li>
             <li><Link href="/about" className="hover:text-paper">About CVTECHUB</Link></li>
             <li><Link href="/about#veridon" className="hover:text-paper">Powered by Veridon</Link></li>
