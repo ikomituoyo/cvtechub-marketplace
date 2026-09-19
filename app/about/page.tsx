@@ -83,14 +83,14 @@ export default function AboutPage() {
           <h2 className="text-2xl font-display font-semibold mb-6">One ecosystem, several interlocking parts</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              ['Marketplace', 'Multi-vendor commerce for phones, computers, electronics and accessories — live now.'],
-              ['Service marketplace', 'Verified repairers, engineers and technical specialists, on request.'],
-              ['Verification & TrustID', 'Product, vendor and transaction-level trust, sourced and disclosed honestly.'],
-              ['CVDA', 'A digital community and association layer for the wider ecosystem.'],
-              ['CVT Wallet', 'A future-ready wallet and account layer for eligible users and SMEs.'],
-              ['Veridon intelligence', 'The AI layer underneath all of the above.'],
-            ].map(([t, d]) => (
-              <div key={t} className="border border-linedark p-6">
+              ['Marketplace', 'Multi-vendor commerce for phones, computers, electronics and accessories — live now.', undefined],
+              ['Service marketplace', 'Verified repairers, engineers and technical specialists, on request.', undefined],
+              ['Verification & TrustID', 'Product, vendor and transaction-level trust, sourced and disclosed honestly.', undefined],
+              ['CVDA', 'A digital community and association layer for the wider ecosystem.', 'cvda'],
+              ['CVT Wallet', 'A future-ready wallet and account layer for eligible users and SMEs.', 'wallet'],
+              ['Veridon intelligence', 'The AI layer underneath all of the above.', undefined],
+            ].map(([t, d, id]) => (
+              <div key={t} id={id} className="border border-linedark p-6 scroll-mt-24">
                 <h4 className="font-semibold mb-2">{t}</h4>
                 <p className="text-sm text-paper/70">{d}</p>
               </div>
