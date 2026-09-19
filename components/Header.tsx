@@ -2,6 +2,16 @@ import Link from 'next/link';
 import { SessionUser } from '@/lib/auth';
 import { db, getOrCreateCart } from '@/lib/db';
 import LogoutButton from './LogoutButton';
+import MobileNav from './MobileNav';
+
+const NAV_LINKS = [
+  { href: '/products', label: 'Marketplace' },
+  { href: '/stores', label: 'Stores' },
+  { href: '/services', label: 'Services' },
+  { href: '/verify', label: 'Verify' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
 
 function cartCount(userId: number | undefined) {
   if (!userId) return 0;
@@ -13,8 +23,8 @@ function cartCount(userId: number | undefined) {
 export default function Header({ session }: { session: SessionUser | null }) {
   const count = session ? cartCount(session.id) : 0;
   return (
-    <header className="sticky top-0 z-40 bg-ink text-paper border-b border-linedark">
-      <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
+    <header className="sticky top-0 z-40 bg-ink text-paper border-b border-linedark overflow-x-hidden">
+      <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-6 relative">
         <Link href="/" className="flex items-center gap-2 font-display text-lg font-semibold">
           <svg width="26" height="26" viewBox="0 0 40 40" aria-hidden="true">
             <defs>
@@ -42,12 +52,13 @@ export default function Header({ session }: { session: SessionUser | null }) {
             <circle cx="27.5" cy="37.5" r="1.7" fill="#1C8FC2" />
           </svg>
           CVTECHUB
-          <span className="text-xs font-mono font-normal border border-linedark px-2 py-0.5 ml-1 opacity-75">marketplace</span>
+          <span className="text-xs font-mono font-normal border border-linedark px-2 py-0.5 ml-1 opacity-75">by Veridon</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          <Link href="/stores" className="opacity-90 hover:opacity-100">Stores</Link>
-          <Link href="/products" className="opacity-90 hover:opacity-100">Products</Link>
+          {NAV_LINKS.map((l) => (
+            <Link key={l.href} href={l.href} className="opacity-90 hover:opacity-100">{l.label}</Link>
+          ))}
           {session && (session.role === 'vendor' || session.role === 'admin') && (
             <Link href="/vendor" className="opacity-90 hover:opacity-100">Vendor dashboard</Link>
           )}
@@ -55,8 +66,12 @@ export default function Header({ session }: { session: SessionUser | null }) {
         </nav>
 
         <div className="flex items-center gap-4 text-sm">
-          <Link href="/cart" className="relative opacity-90 hover:opacity-100">
-            Cart
+          <MobileNav
+            links={NAV_LINKS}
+            showVendor={!!session && (session.role === 'vendor' || session.role === 'admin')}
+            showOrders={!!session}
+          />
+          <Link href="/cart" className="relative opacity-90 hover:opacity-100">            Cart
             {count > 0 && (
               <span className="absolute -top-2 -right-3 bg-brand text-white text-[10px] font-mono w-4 h-4 rounded-full flex items-center justify-center">
                 {count}
@@ -67,8 +82,8 @@ export default function Header({ session }: { session: SessionUser | null }) {
             <LogoutButton />
           ) : (
             <>
-              <Link href="/login" className="opacity-90 hover:opacity-100">Log in</Link>
-              <Link href="/register" className="btn-brand !px-4 !py-2">Sign up</Link>
+              <Link href="/login" className="opacity-90 hover:opacity-100 hidden sm:inline">Log in</Link>
+              <Link href="/sell" className="btn-brand !px-4 !py-2">Sell on CVTECHUB</Link>
             </>
           )}
         </div>

@@ -30,6 +30,7 @@ if (process.env.NODE_ENV !== 'production') global.__cvtechubDb = db;
 // creation and seeding should only ever happen when the app actually runs.
 const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 
+
 function init() {
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (

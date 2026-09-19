@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-export default function RegisterForm() {
-  const [role, setRole] = useState<'buyer' | 'vendor'>('buyer');
+export default function RegisterForm({ initialRole }: { initialRole?: 'buyer' | 'vendor' }) {
+  const [role, setRole] = useState<'buyer' | 'vendor'>(initialRole || 'buyer');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
