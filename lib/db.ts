@@ -16,11 +16,19 @@ function createConnection() {
   const conn = new DatabaseSync(DB_FILE);
   conn.exec('PRAGMA journal_mode = WAL');
   conn.exec('PRAGMA foreign_keys = ON');
+  conn.exec('PRAGMA busy_timeout = 5000');
   return conn;
 }
 
 export const db = global.__cvtechubDb || createConnection();
 if (process.env.NODE_ENV !== 'production') global.__cvtechubDb = db;
+
+// Next.js imports every route/page module during `next build` to collect page
+// data. That happens across several parallel worker processes, each of which
+// would otherwise try to create tables and seed data in the same fresh SQLite
+// file at once — and lose the race with a "database is locked" error. Table
+// creation and seeding should only ever happen when the app actually runs.
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 
 function init() {
   db.exec(`
@@ -103,7 +111,7 @@ function init() {
     );
   `);
 }
-init();
+if (!isBuildPhase) init();
 
 function seed() {
   const userCount = (db.prepare('SELECT COUNT(*) as c FROM users').get() as any).c;
@@ -170,7 +178,15 @@ function seed() {
   const cart = db.prepare(`INSERT INTO carts (user_id) VALUES (?)`);
   cart.run(buyerId);
 }
-seed();
+if (!isBuildPhase) {
+  try {
+    seed();
+  } catch (err) {
+    // Another process seeded it concurrently, or the DB was briefly locked — either
+    // way, safe to move on; the next request will find data already there.
+    console.warn('Seed skipped:', (err as Error).message);
+  }
+}
 
 export function getOrCreateCart(userId: number): number {
   const row = db.prepare('SELECT id FROM carts WHERE user_id = ?').get(userId) as any;
