@@ -14,9 +14,26 @@ declare global {
 
 function createConnection() {
   const conn = new DatabaseSync(DB_FILE);
-  conn.exec('PRAGMA journal_mode = WAL');
-  conn.exec('PRAGMA foreign_keys = ON');
-  conn.exec('PRAGMA busy_timeout = 5000');
+  // busy_timeout must be set FIRST — it governs how this connection waits on
+  // lock contention for every statement that follows, including the very next
+  // one (switching to WAL mode), which is exactly the statement that races
+  // across Next.js's parallel build workers on first run.
+  let attempts = 0;
+  while (true) {
+    try {
+      conn.exec('PRAGMA busy_timeout = 5000');
+      conn.exec('PRAGMA journal_mode = WAL');
+      conn.exec('PRAGMA foreign_keys = ON');
+      break;
+    } catch (err) {
+      attempts += 1;
+      if (attempts >= 5) throw err;
+      // Another build worker is mid-way through creating the same fresh file —
+      // back off briefly on this synchronous path and try again.
+      const until = Date.now() + 200 * attempts;
+      while (Date.now() < until) { /* brief synchronous backoff */ }
+    }
+  }
   return conn;
 }
 
